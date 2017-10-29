@@ -1,0 +1,37 @@
+{
+	"name": "just-carousel",
+	"version": "0.0.0",
+	"description": "Just an 1-item-on-screen carousel that works naturally like an iOS/android desktops and nothing else.",
+	"license": "MIT",
+	"repository": "f0rmat1k/just-carousel",
+	"author": {
+		"name": "Anton Grischenko",
+		"email": "f0rmat1k@yandex-team.ru",
+		"url": "mds-online.ru"
+	},
+	"engines": {
+		"node": ">=4"
+	},
+	"scripts": {
+		"test": "xo && nyc ava"
+	},
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		""
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"ava": "^0.20.0",
+		"codecov": "^2.2.0",
+		"nyc": "^11.0.0",
+		"xo": "^0.18.2"
+	},
+	"nyc": {
+		"reporter": [
+			"lcov",
+			"text"
+		]
+	}
+}
