@@ -4,7 +4,7 @@
 	"description": "Just an 1-item-on-screen carousel that works naturally like an iOS/android desktops and nothing else.",
 	"license": "MIT",
 	"main": "index.js",
-	"repository": "f0rmat1k/just-carousel",
+	"repository": "Promo/just-carousel",
 	"author": {
 		"name": "Anton Grischenko",
 		"email": "f0rmat1k@yandex-team.ru",
