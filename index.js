@@ -45,7 +45,8 @@ var JustCarousel = (function() {
 		this._onTouchEnd = onTouchEnd.bind(this);
 		this._onTouchMove = onTouchMove.bind(this);
 		this._transformTo = transformTo.bind(this);
-		this._animateTo = animateTo.bind(this);
+		this._animateToSlide = animateToSlide.bind(this);
+		this._animate = animate.bind(this);
 		this._onAnimationEnd = onAnimationEnd.bind(this);
 		this._getMostVisibleSlideIdx = getMostVisibleSlideIdx.bind(this);
 		this._getNeededSlide = getNeededSlide.bind(this);
@@ -72,13 +73,34 @@ var JustCarousel = (function() {
 			this.endX = 0;
 			this.startX = 0;
 
-			if (idx < 0 || idx + 1 > this.slides.length) {
-				return this; // need to show begin/end of list
+			var self = this;
+
+			if (idx < 0) {
+				this._animate(1, 80, function () {
+					self._animate(0, 80);
+				});
+
+				return this;
+			}
+
+			if (idx + 1 > this.slides.length) {
+				var rightPoint = -100 / this.slides.length * (this.slides.length - 1);
+
+				this._animate(rightPoint - 1, 80, function () {
+					self._animate(rightPoint, 80);
+				});
+
+				return this;
 			}
 
 			this.neededSlideIdx = idx;
 
-			this._animateTo(this.neededSlideIdx, needQuick, this._onAnimationEnd);
+			if (this._isAnimation) {
+				this._isAnimation = false;
+				cancelAnimationFrame(this.myReq);
+			}
+
+			this._animateToSlide(this.neededSlideIdx, needQuick, this._onAnimationEnd);
 			this.isBehindRightBroder = false;
 			this.isBehindLeftBroder = false;
 
@@ -276,10 +298,10 @@ var JustCarousel = (function() {
 	}
 
 	function getNeededSlide() {
-		return this.neededSlideIdx !== null ? this.neededSlideIdx : this.currentSlideIdx;
+		return this.neededSlideIdx === null ? this.currentSlideIdx : this.neededSlideIdx;
 	}
 
-	function animateTo(idx, needQuick, cb) {
+	function animateToSlide(idx, needQuick, cb) {
 		var self = this;
 
 		var duration = needQuick ? 150 : this.animationDuration;
@@ -312,6 +334,31 @@ var JustCarousel = (function() {
 				self.myReq = requestAnimationFrame(animate);
 			} else {
 				self._isAnimation = false;
+				cb.call(self);
+			}
+		});
+	}
+
+	function animate(pos, duration, cb) {
+		var self = this;
+		var start = performance.now();
+
+		this.shakeReq = requestAnimationFrame(function animate(time) {
+			var timeFraction = (time - start) / duration;
+			if (timeFraction > 1) timeFraction = 1;
+			if (timeFraction < 0) timeFraction = 0;
+
+			var progress = timing(timeFraction);
+			var range = pos - self.currentOffset;
+
+			var value = self.currentOffset + range * progress;
+
+			self.inner.style.transform = 'translate3d(' + value + '%, 0, 0)';
+			if (timeFraction < 1) {
+				self.shakeReq = requestAnimationFrame(animate);
+			} else {
+				self.currentOffset = pos;
+				cb = cb || nope;
 				cb.call(self);
 			}
 		});
