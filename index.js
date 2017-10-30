@@ -35,6 +35,7 @@ var JustCarousel = (function() {
 		this.isMoving = false;
 		this.collectingSpeedTimeout = 0;
 		this.currentSlideIdx = 0;
+		this.neededSlideIdx = null;
 		this.animationDuration = 250;
 		this.width = this.root.getBoundingClientRect().width;
 		this.currentOffset = 0;
