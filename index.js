@@ -2,12 +2,10 @@
 
 (function() {
 	window.requestAnimationFrame || function () {
-
 		'use strict';
 
 		window.requestAnimationFrame = window.msRequestAnimationFrame
 			|| window.mozRequestAnimationFrame
-			|| window.webkitRequestAnimationFrame
 			|| function () {
 
 				var fps = 60;
@@ -16,7 +14,6 @@
 				var previousCallTime = animationStartTime;
 
 				return function requestAnimationFrame(callback) {
-
 					var requestTime = Date.now();
 					var timeout = Math.max(0, delay - (requestTime - previousCallTime));
 					var timeToCall = requestTime + timeout;
@@ -24,7 +21,6 @@
 					previousCallTime = timeToCall;
 
 					return window.setTimeout(function onAnimationFrame() {
-
 						callback(timeToCall - animationStartTime);
 
 					}, timeout);
@@ -32,17 +28,22 @@
 			}();
 
 		window.cancelAnimationFrame = window.mozCancelAnimationFrame
-			|| window.webkitCancelAnimationFrame
 			|| window.cancelRequestAnimationFrame
 			|| window.msCancelRequestAnimationFrame
 			|| window.mozCancelRequestAnimationFrame
-			|| window.webkitCancelRequestAnimationFrame
 			|| function cancelAnimationFrame(id) {
 				window.clearTimeout(id);
 			};
 
 	}();
 }());
+
+try {
+	requestAnimationFrame(function (time) {  });
+} catch (e) {
+	alert(e);
+}
+
 
 (function(){
 	if (!window.performance || !window.performance.now) {
@@ -350,10 +351,11 @@ var JustCarousel = (function() {
 		var start = performance.now();
 
 		var currentOffset = this.currentOffset * 1; // copy
+		// alert(start);
 
 		this._isAnimation = true;
-
 		this.myReq = requestAnimationFrame(function animate(time) {
+			// alert(time);
 			clearTimeout(self._isAnimationTimeout);
 			self._isAnimationTimeout = setTimeout(function () {
 				self._isAnimation = false;
