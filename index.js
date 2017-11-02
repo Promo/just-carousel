@@ -432,3 +432,7 @@ var JustCarousel = (function() {
 
 	return Carousel;
 }());
+
+if (typeof exports === 'object') {
+	module.exports = JustCarousel;
+}
