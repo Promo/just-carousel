@@ -1,31 +1,65 @@
 /* global module, window, document */
 
 (function() {
-	var lastTime = 0;
-	var vendors = ['ms', 'moz', 'webkit', 'o'];
-	for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-		window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-		window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
-			|| window[vendors[x]+'CancelRequestAnimationFrame'];
-	}
+	window.requestAnimationFrame || function () {
 
-	if (!window.requestAnimationFrame) {
-		window.requestAnimationFrame = function(callback, element) {
-			var currTime = new Date().getTime();
-			var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-			var id = window.setTimeout(function() { callback(currTime + timeToCall); },
-				timeToCall);
-			lastTime = currTime + timeToCall;
-			return id;
-		};
-	}
+		'use strict';
 
-	if (!window.cancelAnimationFrame) {
-		window.cancelAnimationFrame = window.mozCancelAnimationFrame || function(id) {
-			clearTimeout(id);
-		};
-	}
+		window.requestAnimationFrame = window.msRequestAnimationFrame
+			|| window.mozRequestAnimationFrame
+			|| window.webkitRequestAnimationFrame
+			|| function () {
+
+				var fps = 60;
+				var delay = 1000 / fps;
+				var animationStartTime = Date.now();
+				var previousCallTime = animationStartTime;
+
+				return function requestAnimationFrame(callback) {
+
+					var requestTime = Date.now();
+					var timeout = Math.max(0, delay - (requestTime - previousCallTime));
+					var timeToCall = requestTime + timeout;
+
+					previousCallTime = timeToCall;
+
+					return window.setTimeout(function onAnimationFrame() {
+
+						callback(timeToCall - animationStartTime);
+
+					}, timeout);
+				};
+			}();
+
+		window.cancelAnimationFrame = window.mozCancelAnimationFrame
+			|| window.webkitCancelAnimationFrame
+			|| window.cancelRequestAnimationFrame
+			|| window.msCancelRequestAnimationFrame
+			|| window.mozCancelRequestAnimationFrame
+			|| window.webkitCancelRequestAnimationFrame
+			|| function cancelAnimationFrame(id) {
+				window.clearTimeout(id);
+			};
+
+	}();
 }());
+
+(function(){
+	if (!window.performance || !window.performance.now) {
+		Date.now || ( Date.now = function () {
+			return new this().getTime();
+		});
+
+		( window.performance ||
+			( window.performance = {} ) ).now = function () {
+			return Date.now() - offset;
+		};
+
+		var offset = ( window.performance.timing ||
+			( window.performance.timing = {} ) ).navigatorStart ||
+			( window.performance.timing.navigatorStart = Date.now() );
+	}
+})();
 
 var JustCarousel = (function() {
 	function Carousel(options){
@@ -52,6 +86,10 @@ var JustCarousel = (function() {
 		this._getNeededSlide = getNeededSlide.bind(this);
 
 		this._onChangePos = (options.onChangePos || nope).bind(this);
+
+		if (typeof exports === 'object') {
+			module.exports = JustCarousel;
+		}
 
 		applyStyles.call(this);
 		addEvents.call(this);
@@ -140,6 +178,7 @@ var JustCarousel = (function() {
 		this.inner.style.padding = '0';
 		this.inner.style.height = '100%';
 		this.inner.style.width = 100 * this.slides.length + '%';
+		this.inner.style.webkitTransform = 'translate3d(0,0,0)';
 		this.inner.style.transform = 'translate3d(0,0,0)';
 		this.inner.style.mozTransformStyle = 'preserve-3d'; /* fixes lag on firefox */
 		this.inner.style.transformStyle = 'preserve-3d';
@@ -321,6 +360,7 @@ var JustCarousel = (function() {
 			}, 150);
 
 			var timeFraction = (time - start) / duration;
+
 			if (timeFraction > 1) timeFraction = 1;
 			if (timeFraction < 0) timeFraction = 0;
 
@@ -328,6 +368,8 @@ var JustCarousel = (function() {
 			var value = (endPoint - currentOffset) * progress + currentOffset;
 
 			self.currentOffset = value;
+
+			self.inner.style.webkitTransform = 'translate3d(' + value + '%, 0, 0)';
 			self.inner.style.transform = 'translate3d(' + value + '%, 0, 0)';
 
 			if (timeFraction < 1) {
@@ -353,7 +395,9 @@ var JustCarousel = (function() {
 
 			var value = self.currentOffset + range * progress;
 
+			self.inner.style.webkitTransform = 'translate3d(' + value + '%, 0, 0)';
 			self.inner.style.transform = 'translate3d(' + value + '%, 0, 0)';
+
 			if (timeFraction < 1) {
 				self.shakeReq = requestAnimationFrame(animate);
 			} else {
@@ -369,6 +413,7 @@ var JustCarousel = (function() {
 	}
 
 	function transformTo(endPoint) {
+		this.inner.style.webkitTransform = 'translate3d(' + endPoint + '%, 0, 0)';
 		this.inner.style.transform = 'translate3d(' + endPoint + '%, 0, 0)';
 	}
 
@@ -386,6 +431,56 @@ var JustCarousel = (function() {
 	return Carousel;
 }());
 
-if (typeof exports === 'object') {
-	module.exports = JustCarousel;
-}
+//
+// var symbol = 0;
+// var counter = 1;
+// var stringMain = '';
+//
+// function rle1(str) {
+// 	var s = str;
+//
+// 	for (var i = 0; i < s.length; i++) {
+// 		if (s[i] == symbol) {
+// 			counter++;
+// 		} else {
+// 			if (symbol != 0) {
+// 				stringMain += symbol;
+// 			}
+//
+// 			if (counter > 1) {
+// 				stringMain += counter
+// 			}
+//
+// 			symbol = s[i];
+// 			counter = 1;
+//
+// 			if (symbol === 'B') {
+// 				console.log(counter)
+// 			}
+// 		}
+// 	}
+//
+// 	return stringMain;
+// }
+//
+// rle1('AABBCC'); // A4B3C2XYZD4E3F3A6B28
+//
+// function rle (string) {
+// 	var s = string;
+// 	var abc;
+// 	var xx = 0;
+// 	var result = '';
+//
+// 	for (var i = 0; i < s.length; i++) {
+// 		if (s[i] === abc) {
+// 			xx ++;
+// 		} else {
+// 			result += abc;
+// 			if (xx > 0) {
+//
+// 			}
+// 			abc = s[i];
+// 			xx = 0;
+// 		}
+// 	}
+// }

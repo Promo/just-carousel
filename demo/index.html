@@ -22,8 +22,10 @@
 		.arrow
 		{
 			position: absolute;
-			top: calc(50% - 15px);
+			top: 50%;
+			height: 30px;
 			width: 30px;
+			margin-top: -15px;
 			cursor: pointer;
 		}
 
@@ -47,10 +49,15 @@
 		}
 
 		li {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
 			color: #fff;
+			position: relative;
+		}
+
+		.num {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin: -5px 0 0 -5px;
 		}
 
 		.one {
@@ -70,9 +77,9 @@
 <div class="frame">
 	<div class="carousel">
 		<ul>
-			<li class="one">1</li>
-			<li class="two">2</li>
-			<li class="three">3</li>
+			<li class="one"><span class="num">1</span></li>
+			<li class="two"><span class="num">2</span></li>
+			<li class="three"><span class="num">3</span></li>
 		</ul>
 	</div>
 
