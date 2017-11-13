@@ -23,7 +23,9 @@ yourself using api.
 * Doesn't react on mouse events.  
 * You need to take care that all slides were the same height.  
 
-Thus, this carousel will suit you, if you just need a lightweight, simple, 1-item-on-screen touch-carousel.
+Thus, this carousel will suit you, if you just need a lightweight, simple, 1-item-on-screen touch-carousel.  
+
+Need something more? Try [Swiper](https://github.com/nolimits4web/Swiper).
 
 ## Install
 
@@ -67,6 +69,10 @@ Type: `DOM Node`
 Required
 
 A root element of carousel.
+
+### startIdx
+
+Starting element.
 
 ### onChangePos
 

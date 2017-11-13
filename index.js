@@ -38,13 +38,6 @@
 	}();
 }());
 
-try {
-	requestAnimationFrame(function (time) {  });
-} catch (e) {
-	alert(e);
-}
-
-
 (function(){
 	if (!window.performance || !window.performance.now) {
 		Date.now || ( Date.now = function () {
@@ -69,11 +62,20 @@ var JustCarousel = (function() {
 		this.slides = this.inner.children;
 		this.isMoving = false;
 		this.collectingSpeedTimeout = 0;
-		this.currentSlideIdx = 0;
+		this.currentSlideIdx = options.startIdx || 0;
+
+		if (this.currentSlideIdx > this.slides.length -1) {
+			console.warn('startIdx is more acceptable. Set up ' + this.currentSlideIdx + ' but there are only ' + this.slides.length + ' slides. Taken ' + (this.slides.length -1) + '.');
+			this.currentSlideIdx = this.slides.length -1;
+		} else if (this.currentSlideIdx < 0) {
+			console.warn('startIdx is less than zero. Taken 0.');
+			this.currentSlideIdx = 0;
+		}
+
 		this.neededSlideIdx = null;
 		this.animationDuration = 250;
 		this.width = this.root.getBoundingClientRect().width;
-		this.currentOffset = 0;
+		this.currentOffset = 100 / this.slides.length * this.currentSlideIdx * -1;
 		this.prevDeltaX = null;
 
 		this._onTouchStart = onTouchStart.bind(this);
@@ -172,15 +174,14 @@ var JustCarousel = (function() {
 		this.root.style.padding = '0';
 		this.root.style.overflow = 'hidden';
 		this.root.style.position = 'relative';
-
 		this.inner.style.listStyleType = 'none';
 		this.inner.style.willChange = 'transform';
 		this.inner.style.margin = '0';
 		this.inner.style.padding = '0';
 		this.inner.style.height = '100%';
 		this.inner.style.width = 100 * this.slides.length + '%';
-		this.inner.style.webkitTransform = 'translate3d(0,0,0)';
-		this.inner.style.transform = 'translate3d(0,0,0)';
+		this.inner.style.webkitTransform = 'translate3d(' + this.currentOffset + '%,0,0)';
+		this.inner.style.transform = 'translate3d(' + this.currentOffset + '%,0,0)';
 		this.inner.style.mozTransformStyle = 'preserve-3d'; /* fixes lag on firefox */
 		this.inner.style.transformStyle = 'preserve-3d';
 		this.inner.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)';
