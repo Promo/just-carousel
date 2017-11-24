@@ -60,6 +60,7 @@ var JustCarousel = (function() {
 		this.root = options.root;
 		this.inner = this.root.querySelector('ul');
 		this.slides = this.inner.children;
+		this.slidesLength = this.slides.length;
 		this.isMoving = false;
 		this.collectingSpeedTimeout = 0;
 		this.currentSlideIdx = options.startIdx || 0;
@@ -110,6 +111,8 @@ var JustCarousel = (function() {
 		},
 
 		slideTo: function (idx, needQuick) {
+			checkForUpdate.call(this);
+
 			this.isMoving = false;
 			this.endX = 0;
 			this.startX = 0;
@@ -146,6 +149,10 @@ var JustCarousel = (function() {
 			this.isBehindLeftBroder = false;
 
 			return this;
+		},
+
+		update: function() {
+			checkForUpdate.call(this);
 		},
 
 		destroy: function () {
@@ -191,10 +198,14 @@ var JustCarousel = (function() {
 		this.inner.style.webkitUserSelect = 'none';
 
 		for (var i = 0; i < this.slides.length; i++) {
-			this.slides[i].style.height = '100%';
-			this.slides[i].style.width = 100 / this.slides.length + '%';
-			this.slides[i].style.float = 'left';
+			applyStylesToSlide.call(this, this.slides[i]);
 		}
+	}
+
+	function applyStylesToSlide(slide) {
+		slide.style.height = '100%';
+		slide.style.width = 100 / this.slides.length + '%';
+		slide.style.float = 'left';
 	}
 
 	function addEvents() {
@@ -427,6 +438,20 @@ var JustCarousel = (function() {
 		var leftSlidePart = (leftSlideIdx + 1) * itemWidth;
 
 		return leftSlideIdx + (itemWidth / 2 > leftSlidePart - currentOffset ? 1 : 0);
+	}
+
+	function checkForUpdate() {
+		if (this.slidesLength === this.slides.length) {
+			return;
+		}
+
+		this.slidesLength = this.slides.length;
+
+		this.inner.style.width = 100 * this.slides.length + '%';
+
+		for (var i = 0; i < this.slidesLength; i++) {
+			applyStylesToSlide.call(this, this.slides[i]);
+		}
 	}
 
 	function nope() {}

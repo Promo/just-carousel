@@ -87,6 +87,10 @@ contains fields: `prevSlide` and `currentSlide`.
 
 ### slideTo(index\<Number\>)
 
+### update()
+
+You can try to call it if something looks strange. it will recalculate some dimensions and reapply styles for slides.
+
 ### destroy()
 
 ## License

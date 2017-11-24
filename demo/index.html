@@ -51,6 +51,7 @@
 		li {
 			color: #fff;
 			position: relative;
+			background: grey;
 		}
 
 		.num {
@@ -90,7 +91,7 @@
 <script>
 	var carousel = new JustCarousel({
 		root: document.querySelector('.carousel'),
-		startIdx: 3,
+		startIdx: 1,
 		onChangePos: function (data) {
 			console.log('onChangePos', data);
 		}
@@ -103,6 +104,13 @@
 	document.querySelector('.arrow_dir_next').addEventListener('click', function () {
 		carousel.slideNext();
 	}, false);
+
+	var dynamicSlide = document.createElement('li');
+	dynamicSlide.innerHTML = 4;
+
+	document.querySelector('ul').appendChild(dynamicSlide);
+
+	carousel.update();
 </script>
 </body>
 </html>
