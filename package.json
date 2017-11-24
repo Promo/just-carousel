@@ -1,6 +1,6 @@
 {
 	"name": "just-carousel",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Just an 1-item-on-screen carousel that works naturally like an iOS/android desktops and nothing else.",
 	"license": "MIT",
 	"main": "index.js",
