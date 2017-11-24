@@ -92,6 +92,12 @@
 	var carousel = new JustCarousel({
 		root: document.querySelector('.carousel'),
 		startIdx: 1,
+		onMovingStart: function () {
+			console.log('start');
+		},
+		onMovingEnd: function () {
+			console.log('end');
+		},
 		onChangePos: function (data) {
 			console.log('onChangePos', data);
 		}
@@ -106,7 +112,7 @@
 	}, false);
 
 	var dynamicSlide = document.createElement('li');
-	dynamicSlide.innerHTML = 4;
+	dynamicSlide.innerHTML = '<span class="num">dynamically added</span>';
 
 	document.querySelector('ul').appendChild(dynamicSlide);
 

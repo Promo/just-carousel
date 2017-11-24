@@ -1,60 +1,5 @@
 /* global module, window, document */
 
-(function() {
-	window.requestAnimationFrame || function () {
-		'use strict';
-
-		window.requestAnimationFrame = window.msRequestAnimationFrame
-			|| window.mozRequestAnimationFrame
-			|| function () {
-
-				var fps = 60;
-				var delay = 1000 / fps;
-				var animationStartTime = Date.now();
-				var previousCallTime = animationStartTime;
-
-				return function requestAnimationFrame(callback) {
-					var requestTime = Date.now();
-					var timeout = Math.max(0, delay - (requestTime - previousCallTime));
-					var timeToCall = requestTime + timeout;
-
-					previousCallTime = timeToCall;
-
-					return window.setTimeout(function onAnimationFrame() {
-						callback(timeToCall - animationStartTime);
-
-					}, timeout);
-				};
-			}();
-
-		window.cancelAnimationFrame = window.mozCancelAnimationFrame
-			|| window.cancelRequestAnimationFrame
-			|| window.msCancelRequestAnimationFrame
-			|| window.mozCancelRequestAnimationFrame
-			|| function cancelAnimationFrame(id) {
-				window.clearTimeout(id);
-			};
-
-	}();
-}());
-
-(function(){
-	if (!window.performance || !window.performance.now) {
-		Date.now || ( Date.now = function () {
-			return new this().getTime();
-		});
-
-		( window.performance ||
-			( window.performance = {} ) ).now = function () {
-			return Date.now() - offset;
-		};
-
-		var offset = ( window.performance.timing ||
-			( window.performance.timing = {} ) ).navigatorStart ||
-			( window.performance.timing.navigatorStart = Date.now() );
-	}
-})();
-
 var JustCarousel = (function() {
 	function Carousel(options){
 		this.root = options.root;
@@ -90,6 +35,8 @@ var JustCarousel = (function() {
 		this._getNeededSlide = getNeededSlide.bind(this);
 
 		this._onChangePos = (options.onChangePos || nope).bind(this);
+		this._onMovingStart = (options.onMovingStart || nope).bind(this);
+		this._onMovingEnd = (options.onMovingEnd || nope).bind(this);
 
 		if (typeof exports === 'object') {
 			module.exports = JustCarousel;
@@ -112,6 +59,7 @@ var JustCarousel = (function() {
 
 		slideTo: function (idx, needQuick) {
 			checkForUpdate.call(this);
+			this._onMovingStart();
 
 			this.isMoving = false;
 			this.endX = 0;
@@ -121,7 +69,9 @@ var JustCarousel = (function() {
 
 			if (idx < 0) {
 				this._animate(1, 80, function () {
-					self._animate(0, 80);
+					self._animate(0, 80, function () {
+						self._onMovingEnd();
+					});
 				});
 
 				return this;
@@ -131,7 +81,9 @@ var JustCarousel = (function() {
 				var rightPoint = -100 / this.slides.length * (this.slides.length - 1);
 
 				this._animate(rightPoint - 1, 80, function () {
-					self._animate(rightPoint, 80);
+					self._animate(rightPoint, 80, function () {
+						self._onMovingEnd();
+					});
 				});
 
 				return this;
@@ -168,6 +120,7 @@ var JustCarousel = (function() {
 	function onAnimationEnd() {
 		this.prevDeltaX = null;
 
+		this._onMovingEnd();
 		this._onChangePos({
 			prevSlide: this.currentSlideIdx,
 			currentSlide: this.neededSlideIdx
@@ -194,8 +147,6 @@ var JustCarousel = (function() {
 		this.inner.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)';
 		this.inner.style.webkitUserDrag = 'none';
 		this.inner.style.webkitTouchCallout = 'none';
-		this.inner.style.userSelect = 'none';
-		this.inner.style.webkitUserSelect = 'none';
 
 		for (var i = 0; i < this.slides.length; i++) {
 			applyStylesToSlide.call(this, this.slides[i]);
@@ -236,6 +187,10 @@ var JustCarousel = (function() {
 		if (this.justTouched) {
 			this.scrollingHorizontally = Math.abs(totalDeltaX) >= Math.abs(totalDeltaY);
 			this.justTouched = false;
+
+			if (this.scrollingHorizontally) {
+				this._onMovingStart();
+			}
 		}
 
 		if (!this.scrollingHorizontally && this.neededSlideIdx === null) {
@@ -452,6 +407,10 @@ var JustCarousel = (function() {
 		for (var i = 0; i < this.slidesLength; i++) {
 			applyStylesToSlide.call(this, this.slides[i]);
 		}
+
+		this.currentOffset = 100 / this.slides.length * this.currentSlideIdx * -1;
+		this.inner.style.width = 100 * this.slides.length + '%';
+		this.inner.style.webkitTransform = 'translate3d(' + this.currentOffset + '%,0,0)';
 	}
 
 	function nope() {}
@@ -462,3 +421,58 @@ var JustCarousel = (function() {
 if (typeof exports === 'object') {
 	module.exports = JustCarousel;
 }
+
+(function() {
+	window.requestAnimationFrame || function () {
+		'use strict';
+
+		window.requestAnimationFrame = window.msRequestAnimationFrame
+			|| window.mozRequestAnimationFrame
+			|| function () {
+
+				var fps = 60;
+				var delay = 1000 / fps;
+				var animationStartTime = Date.now();
+				var previousCallTime = animationStartTime;
+
+				return function requestAnimationFrame(callback) {
+					var requestTime = Date.now();
+					var timeout = Math.max(0, delay - (requestTime - previousCallTime));
+					var timeToCall = requestTime + timeout;
+
+					previousCallTime = timeToCall;
+
+					return window.setTimeout(function onAnimationFrame() {
+						callback(timeToCall - animationStartTime);
+
+					}, timeout);
+				};
+			}();
+
+		window.cancelAnimationFrame = window.mozCancelAnimationFrame
+			|| window.cancelRequestAnimationFrame
+			|| window.msCancelRequestAnimationFrame
+			|| window.mozCancelRequestAnimationFrame
+			|| function cancelAnimationFrame(id) {
+				window.clearTimeout(id);
+			};
+
+	}();
+}());
+
+(function(){
+	if (!window.performance || !window.performance.now) {
+		Date.now || ( Date.now = function () {
+			return new this().getTime();
+		});
+
+		( window.performance ||
+			( window.performance = {} ) ).now = function () {
+			return Date.now() - offset;
+		};
+
+		var offset = ( window.performance.timing ||
+			( window.performance.timing = {} ) ).navigatorStart ||
+			( window.performance.timing.navigatorStart = Date.now() );
+	}
+})();

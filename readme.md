@@ -81,6 +81,13 @@ Type: `function`
 Calls when the end of the animation. Accepts only object argument
 contains fields: `prevSlide` and `currentSlide`.
 
+### onMovingStart
+Calls whenever any animation is started, including calling slideTo and user touch moving. Useful to optimize FPS.
+(For example, you can stop video playing inside of slide when carousel animating.)  
+
+### onMovingEnd
+Calls whenever any animation is stopped.
+
 ## Instance methods
 
 ### slideNext(), slidePrev()
