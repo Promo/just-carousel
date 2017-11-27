@@ -92,11 +92,11 @@
 	var carousel = new JustCarousel({
 		root: document.querySelector('.carousel'),
 		startIdx: 1,
-		onMovingStart: function () {
-			console.log('start');
+		onMovingStart: function (data) {
+			console.log('start', data);
 		},
-		onMovingEnd: function () {
-			console.log('end');
+		onMovingEnd: function (data) {
+			console.log('end', data);
 		},
 		onChangePos: function (data) {
 			console.log('onChangePos', data);

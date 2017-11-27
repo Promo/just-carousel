@@ -59,7 +59,7 @@ var JustCarousel = (function() {
 
 		slideTo: function (idx, needQuick) {
 			checkForUpdate.call(this);
-			onMovingStart.call(this);
+			onMovingStart.call(this, {currentSlide: this.currentSlideIdx});
 
 			this.isMoving = false;
 			this.endX = 0;
@@ -70,7 +70,10 @@ var JustCarousel = (function() {
 			if (idx < 0) {
 				this._animate(1, 80, function () {
 					self._animate(0, 80, function () {
-						onMovingEnd.call(self);
+						onMovingEnd.call(self, {
+							prevSlide: self.currentSlideIdx,
+							currentSlide: self.currentSlideIdx
+						});
 					});
 				});
 
@@ -82,7 +85,10 @@ var JustCarousel = (function() {
 
 				this._animate(rightPoint - 1, 80, function () {
 					self._animate(rightPoint, 80, function () {
-						onMovingEnd.call(self);
+						onMovingEnd.call(self, {
+							prevSlide: self.currentSlideIdx,
+							currentSlide: self.currentSlideIdx
+						});
 					});
 				});
 
@@ -120,12 +126,14 @@ var JustCarousel = (function() {
 	function onAnimationEnd() {
 		this.prevDeltaX = null;
 
-		onMovingEnd.call(this);
-
-		this._onChangePos({
+		var changeInfo = {
 			prevSlide: this.currentSlideIdx,
 			currentSlide: this.neededSlideIdx
-		});
+		};
+
+		onMovingEnd.call(this, changeInfo);
+
+		this._onChangePos(changeInfo);
 
 		this.currentSlideIdx = this.neededSlideIdx * 1;
 		this.neededSlideIdx = null;
@@ -190,7 +198,7 @@ var JustCarousel = (function() {
 			this.justTouched = false;
 
 			if (this.scrollingHorizontally) {
-				onMovingStart.call(this);
+				onMovingStart.call(this, {currentSlide: this.currentSlideIdx});
 			}
 		}
 
@@ -414,16 +422,16 @@ var JustCarousel = (function() {
 		this.inner.style.webkitTransform = 'translate3d(' + this.currentOffset + '%,0,0)';
 	}
 
-	function onMovingStart() {
+	function onMovingStart(data) {
 		if (!this._isAnimating) {
 			this._isAnimating = true;
-			this._onMovingStart();
+			this._onMovingStart(data);
 		}
 	}
 
-	function onMovingEnd() {
+	function onMovingEnd(data) {
 		this._isAnimating = false;
-		this._onMovingEnd();
+		this._onMovingEnd(data);
 	}
 
 	function nope() {}
