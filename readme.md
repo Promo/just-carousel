@@ -82,11 +82,13 @@ Calls when the end of the animation. Accepts only object argument
 contains fields: `prevSlide` and `currentSlide`.
 
 ### onMovingStart
-Calls whenever any animation is started, including calling slideTo and user touch moving. Useful to optimize FPS.
-(For example, you can stop video playing inside of slide when carousel animating.)  
+Calls whenever any animation is started, including calling slideTo and user touch moving.
+Useful to optimize FPS (For example, you can stop video playing inside of slide when carousel animating.).
+Callback takes object with field `currentSlide` contains index.
 
 ### onMovingEnd
-Calls whenever any animation is stopped.
+Calls whenever any animation is stopped. Callback takes object with fields `currentSlide` and `prevSlide`
+contain indexes.
 
 ## Instance methods
 
