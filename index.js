@@ -172,13 +172,13 @@ var JustCarousel = (function() {
 		this.root.addEventListener('touchstart', this._onTouchStart, false);
 		this.root.addEventListener('touchend', this._onTouchEnd, false);
 		this.root.addEventListener('touchcancel', this._onTouchEnd, false);
+		this.root.addEventListener('touchmove', this._onTouchMove);
 	}
 
 	function onTouchStart(e) {
 		cancelAnimationFrame(this.myReq);
 
 		this.justTouched = true;
-		this.root.addEventListener('touchmove', this._onTouchMove);
 
 		this.startCoords = {
 			x: e.touches[0].clientX,
@@ -203,7 +203,6 @@ var JustCarousel = (function() {
 		}
 
 		if (!this.scrollingHorizontally && this.neededSlideIdx === null) {
-			this.root.removeEventListener('touchmove', this._onTouchMove);
 			return;
 		}
 
@@ -249,7 +248,6 @@ var JustCarousel = (function() {
 
 	function onTouchEnd() {
 		this.prevDeltaX = null;
-		this.root.removeEventListener('touchmove', this._onTouchMove);
 		this.justTouched = false;
 
 		if (!this.scrollingHorizontally && this.neededSlideIdx === null) {
