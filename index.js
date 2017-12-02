@@ -68,7 +68,9 @@ var JustCarousel = (function() {
 			var self = this;
 
 			if (idx < 0) {
-				this._animate(1, 80, function () {
+				var pos = this.width / 100 / this.slides.length;
+
+				this._animate(pos, 80, function () {
 					self._animate(0, 80, function () {
 						onMovingEnd.call(self, {
 							prevSlide: self.currentSlideIdx,
@@ -81,9 +83,11 @@ var JustCarousel = (function() {
 			}
 
 			if (idx + 1 > this.slides.length) {
+				var pos = this.width / 100 / this.slides.length;
+
 				var rightPoint = -100 / this.slides.length * (this.slides.length - 1);
 
-				this._animate(rightPoint - 1, 80, function () {
+				this._animate(rightPoint - pos, 80, function () {
 					self._animate(rightPoint, 80, function () {
 						onMovingEnd.call(self, {
 							prevSlide: self.currentSlideIdx,
@@ -325,7 +329,6 @@ var JustCarousel = (function() {
 		var start = performance.now();
 
 		var currentOffset = this.currentOffset * 1; // copy
-		// alert(start);
 
 		this._isAnimation = true;
 		this.myReq = requestAnimationFrame(function animate(time) {

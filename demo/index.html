@@ -93,7 +93,7 @@ But I must explain to you how all this mistaken idea of denouncing pleasure and 
 <script>
 	var root = document.querySelector('ul');
 	var classes = ['one', 'two', 'three'];
-	for (var i = 0; i < 100; i++) {
+	for (var i = 0; i < 101; i++) {
 		var li = document.createElement('li');
 		li.className = classes[Math.floor(classes.length * Math.random())];
 		li.innerHTML = '<span class="num" style="background-image: url(https://picsum.photos/1000/1000/?random&v=' + i +')">' + (i + 1) + '</span>';
@@ -102,7 +102,7 @@ But I must explain to you how all this mistaken idea of denouncing pleasure and 
 
 	var carousel = new JustCarousel({
 		root: document.querySelector('.carousel'),
-		startIdx: 1,
+		startIdx: 99,
 		onMovingStart: function (data) {
 			console.log('start', data);
 		},
