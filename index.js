@@ -445,6 +445,10 @@ if (typeof exports === 'object') {
 }
 
 (function() {
+	if (typeof window === 'undefined') {
+		return;
+	}
+
 	window.requestAnimationFrame || function () {
 		'use strict';
 
@@ -483,6 +487,10 @@ if (typeof exports === 'object') {
 }());
 
 (function(){
+	if (typeof window === 'undefined') {
+		return;
+	}
+
 	if (!window.performance || !window.performance.now) {
 		Date.now || ( Date.now = function () {
 			return new this().getTime();
