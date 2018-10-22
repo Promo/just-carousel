@@ -137,7 +137,9 @@ var JustCarousel = (function() {
 
 		onMovingEnd.call(this, changeInfo);
 
-		this._onChangePos(changeInfo);
+		if (this.currentSlideIdx !== this.neededSlideIdx) {
+			this._onChangePos(changeInfo);
+		}
 
 		this.currentSlideIdx = this.neededSlideIdx * 1;
 		this.neededSlideIdx = null;
