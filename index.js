@@ -19,10 +19,16 @@ var JustCarousel = (function() {
 		}
 
 		this.neededSlideIdx = null;
-		this.animationDuration = 250;
+		this.animationDuration = options.duration || 250;
 		this.width = this.root.getBoundingClientRect().width;
 		this.currentOffset = 100 / this.slides.length * this.currentSlideIdx * -1;
 		this.prevDeltaX = null;
+
+		this.timing =
+			options.timingFunction ||
+			(function (t) {
+				return t * (2 - t);
+			});
 
 		this._onTouchStart = onTouchStart.bind(this);
 		this._onTouchEnd = onTouchEnd.bind(this);
@@ -343,7 +349,7 @@ var JustCarousel = (function() {
 			if (timeFraction > 1) timeFraction = 1;
 			if (timeFraction < 0) timeFraction = 0;
 
-			var progress = timing(timeFraction);
+			var progress = self.timing(timeFraction);
 			var value = (endPoint - currentOffset) * progress + currentOffset;
 
 			self.currentOffset = value;
@@ -369,7 +375,7 @@ var JustCarousel = (function() {
 			if (timeFraction > 1) timeFraction = 1;
 			if (timeFraction < 0) timeFraction = 0;
 
-			var progress = timing(timeFraction);
+			var progress = self.timing(timeFraction);
 			var range = pos - self.currentOffset;
 
 			var value = self.currentOffset + range * progress;
@@ -385,10 +391,6 @@ var JustCarousel = (function() {
 				cb.call(self);
 			}
 		});
-	}
-
-	function timing(t) {
-		return t * (2 - t);
 	}
 
 	function transformTo(endPoint) {
