@@ -7,7 +7,7 @@ Just an 1-item-on-screen carousel that works naturally like an iOS/android deskt
 ## Advantages
 
 * No dependencies.  
-* 1.6kb min + gzip, 8kb full.  
+* 2.6kb gzip, 9.1kb full.  
 * Android 4+, WP8+, iOS 7+.  
 * Written on es3 so must work on most desktop browsers (only requires support for `transform3d`).  
 * Easy integration with React, Vue, etc.
@@ -73,6 +73,24 @@ A root element of carousel.
 ### startIdx
 
 Starting element.
+
+### duration
+Type: `number`  
+Animation duration (milliseconds, default is 250)
+
+### timingFunction
+Type: `function`  
+Animation timing function
+```javascript
+/**
+ * Default function is ease-out
+ * @param {number} t — timing fraction (from 0 to 1)
+ * @returns {number} — animation fraction
+ */
+function (t) {
+	return t * (2 - t);
+}
+```
 
 ### onChangePos
 
